@@ -1,1 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación: La Teoría Atómica (Química)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #results {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Evaluación: La Teoría Atómica (Química)</h1>
+    <div class="quiz-container">
+        <div id="quiz"></div>
+        <button id="submit">Enviar respuestas</button>
+        <div id="results"></div>
+    </div>
+    <footer>
+        &copy; Derechos Reservados Prof. Alberto Sanchez
+    </footer>
+    <script>
+        const quizData = [
+            {
+                question: "¿Qué es un átomo?",
+                answers: [
+                    { text: "La unidad más pequeña de un elemento que conserva sus propiedades.", correct: true },
+                    { text: "Una molécula compuesta por varios elementos.", correct: false },
+                    { text: "Un ion cargado.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un electrón?",
+                answers: [
+                    { text: "Una partícula subatómica con carga negativa.", correct: true },
+                    { text: "Una partícula subatómica con carga positiva.", correct: false },
+                    { text: "Una partícula subatómica sin carga.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un protón?",
+                answers: [
+                    { text: "Una partícula subatómica con carga positiva.", correct: true },
+                    { text: "Una partícula subatómica con carga negativa.", correct: false },
+                    { text: "Una partícula subatómica sin carga.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un neutrón?",
+                answers: [
+                    { text: "Una partícula subatómica sin carga.", correct: true },
+                    { text: "Una partícula subatómica con carga positiva.", correct: false },
+                    { text: "Una partícula subatómica con carga negativa.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el número atómico?",
+                answers: [
+                    { text: "El número de protones en el núcleo de un átomo.", correct: true },
+                    { text: "El número de electrones en un átomo.", correct: false },
+                    { text: "El número de neutrones en un átomo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la masa atómica?",
+                answers: [
+                    { text: "La masa promedio de los átomos de un elemento, teniendo en cuenta los isótopos.", correct: true },
+                    { text: "La masa de un solo átomo de un elemento.", correct: false },
+                    { text: "La masa del núcleo de un átomo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un isótopo?",
+                answers: [
+                    { text: "Átomos del mismo elemento con diferente número de neutrones.", correct: true },
+                    { text: "Átomos de diferentes elementos con el mismo número de protones.", correct: false },
+                    { text: "Átomos del mismo elemento con diferente número de protones.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un ion?",
+                answers: [
+                    { text: "Un átomo o molécula con carga eléctrica debido a la pérdida o ganancia de electrones.", correct: true },
+                    { text: "Un átomo o molécula con carga eléctrica debido a la pérdida o ganancia de protones.", correct: false },
+                    { text: "Un átomo o molécula sin carga eléctrica.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el modelo de Bohr?",
+                answers: [
+                    { text: "Un modelo atómico que describe los electrones en órbitas circulares alrededor del núcleo.", correct: true },
+                    { text: "Un modelo atómico que describe los electrones en una nube alrededor del núcleo.", correct: false },
+                    { text: "Un modelo atómico que describe los protones en órbitas circulares alrededor del núcleo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el modelo de nube de electrones?",
+                answers: [
+                    { text: "Un modelo atómico que describe los electrones en una nube difusa alrededor del núcleo.", correct: true },
+                    { text: "Un modelo atómico que describe los electrones en órbitas circulares alrededor del núcleo.", correct: false },
+                    { text: "Un modelo atómico que describe los protones en una nube difusa alrededor del núcleo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el número de masa?",
+                answers: [
+                    { text: "La suma de protones y neutrones en el núcleo de un átomo.", correct: true },
+                    { text: "El número de protones en un átomo.", correct: false },
+                    { text: "El número de electrones en un átomo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la configuración electrónica?",
+                answers: [
+                    { text: "La distribución de electrones en los diferentes niveles de energía de un átomo.", correct: true },
+                    { text: "La distribución de protones en el núcleo de un átomo.", correct: false },
+                    { text: "La distribución de neutrones en el núcleo de un átomo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el principio de exclusión de Pauli?",
+                answers: [
+                    { text: "Dos electrones en un átomo no pueden tener los mismos cuatro números cuánticos.", correct: true },
+                    { text: "Dos electrones en un átomo deben tener los mismos cuatro números cuánticos.", correct: false },
+                    { text: "Dos protones en un átomo no pueden tener los mismos cuatro números cuánticos.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la regla del octeto?",
+                answers: [
+                    { text: "Los átomos tienden a ganar, perder o compartir electrones para tener ocho electrones en su capa de valencia.", correct: true },
+                    { text: "Los átomos siempre tienen ocho protones en su núcleo.", correct: false },
+                    { text: "Los átomos siempre tienen ocho electrones en su núcleo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una molécula?",
+                answers: [
+                    { text: "Una combinación de dos o más átomos unidos por enlaces químicos.", correct: true },
+                    { text: "Un átomo individual.", correct: false },
+                    { text: "Un ion con carga positiva.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace covalente?",
+                answers: [
+                    { text: "Un enlace químico en el que los átomos comparten electrones.", correct: true },
+                    { text: "Un enlace químico en el que un átomo transfiere electrones a otro.", correct: false },
+                    { text: "Un enlace químico en el que los protones son compartidos.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace iónico?",
+                answers: [
+                    { text: "Un enlace químico en el que un átomo transfiere electrones a otro.", correct: true },
+                    { text: "Un enlace químico en el que los átomos comparten electrones.", correct: false },
+                    { text: "Un enlace químico en el que los protones son transferidos.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una reacción química?",
+                answers: [
+                    { text: "Un proceso en el que las sustancias se transforman en nuevas sustancias con propiedades diferentes.", correct: true },
+                    { text: "Un proceso en el que una sustancia se disuelve en otra.", correct: false },
+                    { text: "Un proceso en el que las moléculas se mezclan sin reaccionar.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una ecuación química?",
+                answers: [
+                    { text: "Una representación simbólica de una reacción química.", correct: true },
+                    { text: "Una fórmula matemática para calcular la masa atómica.", correct: false },
+                    { text: "Un diagrama que muestra la estructura de una molécula.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un catalizador?",
+                answers: [
+                    { text: "Una sustancia que aumenta la velocidad de una reacción química sin consumirse en el proceso.", correct: true },
+                    { text: "Una sustancia que disminuye la velocidad de una reacción química.", correct: false },
+                    { text: "Una sustancia que se consume en una reacción química.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un ácido según Arrhenius?",
+                answers: [
+                    { text: "Una sustancia que produce iones H+ en solución acuosa.", correct: true },
+                    { text: "Una sustancia que produce iones OH- en solución acuosa.", correct: false },
+                    { text: "Una sustancia que dona un par de electrones.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una base según Arrhenius?",
+                answers: [
+                    { text: "Una sustancia que produce iones OH- en solución acuosa.", correct: true },
+                    { text: "Una sustancia que produce iones H+ en solución acuosa.", correct: false },
+                    { text: "Una sustancia que acepta un par de electrones.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la electronegatividad?",
+                answers: [
+                    { text: "La capacidad de un átomo para atraer electrones hacia sí mismo en un enlace químico.", correct: true },
+                    { text: "La cantidad de energía necesaria para remover un electrón de un átomo.", correct: false },
+                    { text: "La cantidad de energía liberada cuando un átomo gana un electrón.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una reacción de oxidación?",
+                answers: [
+                    { text: "Un proceso en el que un átomo o ion pierde electrones.", correct: true },
+                    { text: "Un proceso en el que un átomo o ion gana electrones.", correct: false },
+                    { text: "Un proceso en el que un átomo o ion se disuelve en agua.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una reacción de reducción?",
+                answers: [
+                    { text: "Un proceso en el que un átomo o ion gana electrones.", correct: true },
+                    { text: "Un proceso en el que un átomo o ion pierde electrones.", correct: false },
+                    { text: "Un proceso en el que un átomo o ion se disuelve en agua.", correct: false }
+                ]
+            }
+        ];
 
+        let attempt = 0;
+        const maxAttempts = 3;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadQuiz() {
+            const quizContainer = document.getElementById('quiz');
+            quizContainer.innerHTML = '';
+            quizData.forEach((data, index) => {
+                const questionContainer = document.createElement('div');
+                questionContainer.className = 'question';
+
+                const questionTitle = document.createElement('h3');
+                questionTitle.innerText = `${index + 1}. ${data.question}`;
+                questionContainer.appendChild(questionTitle);
+
+                const optionsList = document.createElement('ul');
+                optionsList.className = 'options';
+
+                shuffle(data.answers).forEach(answer => {
+                    const option = document.createElement('li');
+                    const optionLabel = document.createElement('label');
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question${index}`;
+                    optionInput.value = answer.correct;
+                    optionLabel.appendChild(optionInput);
+                    optionLabel.appendChild(document.createTextNode(answer.text));
+                    option.appendChild(optionLabel);
+                    optionsList.appendChild(option);
+                });
+
+                questionContainer.appendChild(optionsList);
+                quizContainer.appendChild(questionContainer);
+            });
+        }
+
+        function submitQuiz() {
+            if (attempt >= maxAttempts) {
+                alert('Has alcanzado el número máximo de intentos.');
+                return;
+            }
+
+            const resultsContainer = document.getElementById('results');
+            const answers = document.querySelectorAll('input[type="radio"]:checked');
+            let score = 0;
+
+            quizData.forEach((data, index) => {
+                const selected = answers[index] ? answers[index].value === 'true' : null;
+                if (selected === true) {
+                    score += 0.4; // Each correct answer is worth 0.4 points
+                }
+            });
+
+            score = Math.round(score * 10) / 10; // Round to one decimal place
+            let feedback = quizData.map((data, index) => {
+                const selected = answers[index] ? answers[index].value === 'true' : null;
+                let result;
+                if (selected === null) {
+                    result = "No contestada";
+                } else if (selected === true) {
+                    result = "Correcta";
+                } else {
+                    result = "Incorrecta";
+                }
+                return `<p>${index + 1}. ${result}</p>`;
+            }).join("");
+
+            resultsContainer.innerHTML = `<h3>Resultados:</h3><p>Puntaje: ${score} / 10</p>${feedback}`;
+
+            attempt++;
+            if (attempt >= maxAttempts) {
+                alert('Has alcanzado el número máximo de intentos.');
+            }
+        }
+
+        document.getElementById('submit').addEventListener('click', submitQuiz);
+
+        loadQuiz();
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación: La Teoría Atómica (Química)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #results {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Evaluación: La Teoría Atómica (Química)</h1>
+    <div class="quiz-container">
+        <div id="quiz"></div>
+        <button id="submit">Enviar respuestas</button>
+        <div id="results"></div>
+    </div>
+    <footer>
+        &copy; Derechos Reservados Prof. Alberto Sanchez
+    </footer>
+    <script>
+        const quizData = [
+            {
+                question: "¿Qué es un átomo?",
+                answers: [
+                    { text: "La unidad más pequeña de un elemento que conserva sus propiedades.", correct: true },
+                    { text: "Una molécula compuesta por varios elementos.", correct: false },
+                    { text: "Un ion cargado.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un electrón?",
+                answers: [
+                    { text: "Una partícula subatómica con carga negativa.", correct: true },
+                    { text: "Una partícula subatómica con carga positiva.", correct: false },
+                    { text: "Una partícula subatómica sin carga.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un protón?",
+                answers: [
+                    { text: "Una partícula subatómica con carga positiva.", correct: true },
+                    { text: "Una partícula subatómica con carga negativa.", correct: false },
+                    { text: "Una partícula subatómica sin carga.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un neutrón?",
+                answers: [
+                    { text: "Una partícula subatómica sin carga.", correct: true },
+                    { text: "Una partícula subatómica con carga positiva.", correct: false },
+                    { text: "Una partícula subatómica con carga negativa.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el número atómico?",
+                answers: [
+                    { text: "El número de protones en el núcleo de un átomo.", correct: true },
+                    { text: "El número de electrones en un átomo.", correct: false },
+                    { text: "El número de neutrones en un átomo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la masa atómica?",
+                answers: [
+                    { text: "La masa promedio de los átomos de un elemento, teniendo en cuenta los isótopos.", correct: true },
+                    { text: "La masa de un solo átomo de un elemento.", correct: false },
+                    { text: "La masa del núcleo de un átomo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un isótopo?",
+                answers: [
+                    { text: "Átomos del mismo elemento con diferente número de neutrones.", correct: true },
+                    { text: "Átomos de diferentes elementos con el mismo número de protones.", correct: false },
+                    { text: "Átomos del mismo elemento con diferente número de protones.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un ion?",
+                answers: [
+                    { text: "Un átomo o molécula con carga eléctrica debido a la pérdida o ganancia de electrones.", correct: true },
+                    { text: "Un átomo o molécula con carga eléctrica debido a la pérdida o ganancia de protones.", correct: false },
+                    { text: "Un átomo o molécula sin carga eléctrica.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el modelo de Bohr?",
+                answers: [
+                    { text: "Un modelo atómico que describe los electrones en órbitas circulares alrededor del núcleo.", correct: true },
+                    { text: "Un modelo atómico que describe los electrones en una nube alrededor del núcleo.", correct: false },
+                    { text: "Un modelo atómico que describe los protones en órbitas circulares alrededor del núcleo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el modelo de nube de electrones?",
+                answers: [
+                    { text: "Un modelo atómico que describe los electrones en una nube difusa alrededor del núcleo.", correct: true },
+                    { text: "Un modelo atómico que describe los electrones en órbitas circulares alrededor del núcleo.", correct: false },
+                    { text: "Un modelo atómico que describe los protones en una nube difusa alrededor del núcleo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el número de masa?",
+                answers: [
+                    { text: "La suma de protones y neutrones en el núcleo de un átomo.", correct: true },
+                    { text: "El número de protones en un átomo.", correct: false },
+                    { text: "El número de electrones en un átomo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la configuración electrónica?",
+                answers: [
+                    { text: "La distribución de electrones en los diferentes niveles de energía de un átomo.", correct: true },
+                    { text: "La distribución de protones en el núcleo de un átomo.", correct: false },
+                    { text: "La distribución de neutrones en el núcleo de un átomo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el principio de exclusión de Pauli?",
+                answers: [
+                    { text: "Dos electrones en un átomo no pueden tener los mismos cuatro números cuánticos.", correct: true },
+                    { text: "Dos electrones en un átomo deben tener los mismos cuatro números cuánticos.", correct: false },
+                    { text: "Dos protones en un átomo no pueden tener los mismos cuatro números cuánticos.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la regla del octeto?",
+                answers: [
+                    { text: "Los átomos tienden a ganar, perder o compartir electrones para tener ocho electrones en su capa de valencia.", correct: true },
+                    { text: "Los átomos siempre tienen ocho protones en su núcleo.", correct: false },
+                    { text: "Los átomos siempre tienen ocho electrones en su núcleo.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una molécula?",
+                answers: [
+                    { text: "Una combinación de dos o más átomos unidos por enlaces químicos.", correct: true },
+                    { text: "Un átomo individual.", correct: false },
+                    { text: "Un ion con carga positiva.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace covalente?",
+                answers: [
+                    { text: "Un enlace químico en el que los átomos comparten electrones.", correct: true },
+                    { text: "Un enlace químico en el que un átomo transfiere electrones a otro.", correct: false },
+                    { text: "Un enlace químico en el que los protones son compartidos.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un enlace iónico?",
+                answers: [
+                    { text: "Un enlace químico en el que un átomo transfiere electrones a otro.", correct: true },
+                    { text: "Un enlace químico en el que los átomos comparten electrones.", correct: false },
+                    { text: "Un enlace químico en el que los protones son transferidos.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una reacción química?",
+                answers: [
+                    { text: "Un proceso en el que las sustancias se transforman en nuevas sustancias con propiedades diferentes.", correct: true },
+                    { text: "Un proceso en el que una sustancia se disuelve en otra.", correct: false },
+                    { text: "Un proceso en el que las moléculas se mezclan sin reaccionar.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una ecuación química?",
+                answers: [
+                    { text: "Una representación simbólica de una reacción química.", correct: true },
+                    { text: "Una fórmula matemática para calcular la masa atómica.", correct: false },
+                    { text: "Un diagrama que muestra la estructura de una molécula.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un catalizador?",
+                answers: [
+                    { text: "Una sustancia que aumenta la velocidad de una reacción química sin consumirse en el proceso.", correct: true },
+                    { text: "Una sustancia que disminuye la velocidad de una reacción química.", correct: false },
+                    { text: "Una sustancia que se consume en una reacción química.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es un ácido según Arrhenius?",
+                answers: [
+                    { text: "Una sustancia que produce iones H+ en solución acuosa.", correct: true },
+                    { text: "Una sustancia que produce iones OH- en solución acuosa.", correct: false },
+                    { text: "Una sustancia que dona un par de electrones.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una base según Arrhenius?",
+                answers: [
+                    { text: "Una sustancia que produce iones OH- en solución acuosa.", correct: true },
+                    { text: "Una sustancia que produce iones H+ en solución acuosa.", correct: false },
+                    { text: "Una sustancia que acepta un par de electrones.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la electronegatividad?",
+                answers: [
+                    { text: "La capacidad de un átomo para atraer electrones hacia sí mismo en un enlace químico.", correct: true },
+                    { text: "La cantidad de energía necesaria para remover un electrón de un átomo.", correct: false },
+                    { text: "La cantidad de energía liberada cuando un átomo gana un electrón.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una reacción de oxidación?",
+                answers: [
+                    { text: "Un proceso en el que un átomo o ion pierde electrones.", correct: true },
+                    { text: "Un proceso en el que un átomo o ion gana electrones.", correct: false },
+                    { text: "Un proceso en el que un átomo o ion se disuelve en agua.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una reacción de reducción?",
+                answers: [
+                    { text: "Un proceso en el que un átomo o ion gana electrones.", correct: true },
+                    { text: "Un proceso en el que un átomo o ion pierde electrones.", correct: false },
+                    { text: "Un proceso en el que un átomo o ion se disuelve en agua.", correct: false }
+                ]
+            }
+        ];
+
+        let attempt = 0;
+        const maxAttempts = 3;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadQuiz() {
+            const quizContainer = document.getElementById('quiz');
+            quizContainer.innerHTML = '';
+            quizData.forEach((data, index) => {
+                const questionContainer = document.createElement('div');
+                questionContainer.className = 'question';
+
+                const questionTitle = document.createElement('h3');
+                questionTitle.innerText = `${index + 1}. ${data.question}`;
+                questionContainer.appendChild(questionTitle);
+
+                const optionsList = document.createElement('ul');
+                optionsList.className = 'options';
+
+                shuffle(data.answers).forEach(answer => {
+                    const option = document.createElement('li');
+                    const optionLabel = document.createElement('label');
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question${index}`;
+                    optionInput.value = answer.correct;
+                    optionLabel.appendChild(optionInput);
+                    optionLabel.appendChild(document.createTextNode(answer.text));
+                    option.appendChild(optionLabel);
+                    optionsList.appendChild(option);
+                });
+
+                questionContainer.appendChild(optionsList);
+                quizContainer.appendChild(questionContainer);
+            });
+        }
+
+        function submitQuiz() {
+            if (attempt >= maxAttempts) {
+                alert('Has alcanzado el número máximo de intentos.');
+                return;
+            }
+
+            const resultsContainer = document.getElementById('results');
+            const answers = document.querySelectorAll('input[type="radio"]:checked');
+            let score = 0;
+
+            quizData.forEach((data, index) => {
+                const selected = answers[index] ? answers[index].value === 'true' : null;
+                if (selected === true) {
+                    score += 0.4; // Each correct answer is worth 0.4 points
+                }
+            });
+
+            score = Math.round(score * 10) / 10; // Round to one decimal place
+            let feedback = quizData.map((data, index) => {
+                const selected = answers[index] ? answers[index].value === 'true' : null;
+                let result;
+                if (selected === null) {
+                    result = "No contestada";
+                } else if (selected === true) {
+                    result = "Correcta";
+                } else {
+                    result = "Incorrecta";
+                }
+                return `<p>${index + 1}. ${result}</p>`;
+            }).join("");
+
+            resultsContainer.innerHTML = `<h3>Resultados:</h3><p>Puntaje: ${score} / 10</p>${feedback}`;
+
+            attempt++;
+            if (attempt >= maxAttempts) {
+                alert('Has alcanzado el número máximo de intentos.');
+            }
+        }
+
+        document.getElementById('submit').addEventListener('click', submitQuiz);
+
+        loadQuiz();
+    </script>
+</body>
+</html>
