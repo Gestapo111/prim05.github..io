@@ -3,732 +3,611 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación: La Teoría Atómica (Química)</title>
+    <title>Unidad 5: La Teoría Atómica</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            color: #333;
-        }
-        .quiz-container {
-            background-color: #fff;
             padding: 20px;
-            margin: 20px 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px;
+        }
+        h1, h2 {
+            text-align: center;
         }
         .question {
-            margin-bottom: 15px;
+            margin: 20px 0;
         }
-        .options {
-            list-style-type: none;
-            padding: 0;
-        }
-        .options li {
+        .question label {
+            font-weight: bold;
+            display: block;
             margin-bottom: 10px;
         }
-        button {
+        .question .options {
+            margin-left: 20px;
+        }
+        .question .options input {
+            margin-right: 10px;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        .popup-content input {
+            margin-bottom: 20px;
+            padding: 15px;
+            width: 80%;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .popup-content button {
+            padding: 15px 30px;
             background-color: #28a745;
             color: #fff;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
             font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        button:hover {
-            background-color: #218838;
-        }
-        #results {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        footer {
-            background-color: #333;
+        button.submit-btn {
+            padding: 15px 30px;
+            background-color: #007bff;
             color: #fff;
-            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
             width: 100%;
             text-align: center;
-            position: fixed;
-            bottom: 0;
+        }
+        button.submit-btn:hover {
+            background-color: #0056b3;
+        }
+        #timer {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Evaluación: La Teoría Atómica (Química)</h1>
-    <div class="quiz-container">
-        <div id="quiz"></div>
-        <button id="submit">Enviar respuestas</button>
-        <div id="results"></div>
+
+<div class="popup" id="popup">
+    <div class="popup-content">
+        <h2>Complete la siguiente información</h2>
+        <input type="text" id="nombre" placeholder="Nombre Completo" required>
+        <input type="text" id="nie" placeholder="NIE" required>
+        <button onclick="validatePopup()">Continuar</button>
     </div>
-    <footer>
-        &copy; Derechos Reservados Prof. Alberto Sanchez
-    </footer>
-    <script>
-        const quizData = [
-            {
-                question: "¿Qué es un átomo?",
-                answers: [
-                    { text: "La unidad más pequeña de un elemento que conserva sus propiedades.", correct: true },
-                    { text: "Una molécula compuesta por varios elementos.", correct: false },
-                    { text: "Un ion cargado.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un electrón?",
-                answers: [
-                    { text: "Una partícula subatómica con carga negativa.", correct: true },
-                    { text: "Una partícula subatómica con carga positiva.", correct: false },
-                    { text: "Una partícula subatómica sin carga.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un protón?",
-                answers: [
-                    { text: "Una partícula subatómica con carga positiva.", correct: true },
-                    { text: "Una partícula subatómica con carga negativa.", correct: false },
-                    { text: "Una partícula subatómica sin carga.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un neutrón?",
-                answers: [
-                    { text: "Una partícula subatómica sin carga.", correct: true },
-                    { text: "Una partícula subatómica con carga positiva.", correct: false },
-                    { text: "Una partícula subatómica con carga negativa.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el número atómico?",
-                answers: [
-                    { text: "El número de protones en el núcleo de un átomo.", correct: true },
-                    { text: "El número de electrones en un átomo.", correct: false },
-                    { text: "El número de neutrones en un átomo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la masa atómica?",
-                answers: [
-                    { text: "La masa promedio de los átomos de un elemento, teniendo en cuenta los isótopos.", correct: true },
-                    { text: "La masa de un solo átomo de un elemento.", correct: false },
-                    { text: "La masa del núcleo de un átomo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un isótopo?",
-                answers: [
-                    { text: "Átomos del mismo elemento con diferente número de neutrones.", correct: true },
-                    { text: "Átomos de diferentes elementos con el mismo número de protones.", correct: false },
-                    { text: "Átomos del mismo elemento con diferente número de protones.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un ion?",
-                answers: [
-                    { text: "Un átomo o molécula con carga eléctrica debido a la pérdida o ganancia de electrones.", correct: true },
-                    { text: "Un átomo o molécula con carga eléctrica debido a la pérdida o ganancia de protones.", correct: false },
-                    { text: "Un átomo o molécula sin carga eléctrica.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el modelo de Bohr?",
-                answers: [
-                    { text: "Un modelo atómico que describe los electrones en órbitas circulares alrededor del núcleo.", correct: true },
-                    { text: "Un modelo atómico que describe los electrones en una nube alrededor del núcleo.", correct: false },
-                    { text: "Un modelo atómico que describe los protones en órbitas circulares alrededor del núcleo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el modelo de nube de electrones?",
-                answers: [
-                    { text: "Un modelo atómico que describe los electrones en una nube difusa alrededor del núcleo.", correct: true },
-                    { text: "Un modelo atómico que describe los electrones en órbitas circulares alrededor del núcleo.", correct: false },
-                    { text: "Un modelo atómico que describe los protones en una nube difusa alrededor del núcleo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el número de masa?",
-                answers: [
-                    { text: "La suma de protones y neutrones en el núcleo de un átomo.", correct: true },
-                    { text: "El número de protones en un átomo.", correct: false },
-                    { text: "El número de electrones en un átomo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la configuración electrónica?",
-                answers: [
-                    { text: "La distribución de electrones en los diferentes niveles de energía de un átomo.", correct: true },
-                    { text: "La distribución de protones en el núcleo de un átomo.", correct: false },
-                    { text: "La distribución de neutrones en el núcleo de un átomo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el principio de exclusión de Pauli?",
-                answers: [
-                    { text: "Dos electrones en un átomo no pueden tener los mismos cuatro números cuánticos.", correct: true },
-                    { text: "Dos electrones en un átomo deben tener los mismos cuatro números cuánticos.", correct: false },
-                    { text: "Dos protones en un átomo no pueden tener los mismos cuatro números cuánticos.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la regla del octeto?",
-                answers: [
-                    { text: "Los átomos tienden a ganar, perder o compartir electrones para tener ocho electrones en su capa de valencia.", correct: true },
-                    { text: "Los átomos siempre tienen ocho protones en su núcleo.", correct: false },
-                    { text: "Los átomos siempre tienen ocho electrones en su núcleo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una molécula?",
-                answers: [
-                    { text: "Una combinación de dos o más átomos unidos por enlaces químicos.", correct: true },
-                    { text: "Un átomo individual.", correct: false },
-                    { text: "Un ion con carga positiva.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace covalente?",
-                answers: [
-                    { text: "Un enlace químico en el que los átomos comparten electrones.", correct: true },
-                    { text: "Un enlace químico en el que un átomo transfiere electrones a otro.", correct: false },
-                    { text: "Un enlace químico en el que los protones son compartidos.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace iónico?",
-                answers: [
-                    { text: "Un enlace químico en el que un átomo transfiere electrones a otro.", correct: true },
-                    { text: "Un enlace químico en el que los átomos comparten electrones.", correct: false },
-                    { text: "Un enlace químico en el que los protones son transferidos.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una reacción química?",
-                answers: [
-                    { text: "Un proceso en el que las sustancias se transforman en nuevas sustancias con propiedades diferentes.", correct: true },
-                    { text: "Un proceso en el que una sustancia se disuelve en otra.", correct: false },
-                    { text: "Un proceso en el que las moléculas se mezclan sin reaccionar.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una ecuación química?",
-                answers: [
-                    { text: "Una representación simbólica de una reacción química.", correct: true },
-                    { text: "Una fórmula matemática para calcular la masa atómica.", correct: false },
-                    { text: "Un diagrama que muestra la estructura de una molécula.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un catalizador?",
-                answers: [
-                    { text: "Una sustancia que aumenta la velocidad de una reacción química sin consumirse en el proceso.", correct: true },
-                    { text: "Una sustancia que disminuye la velocidad de una reacción química.", correct: false },
-                    { text: "Una sustancia que se consume en una reacción química.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un ácido según Arrhenius?",
-                answers: [
-                    { text: "Una sustancia que produce iones H+ en solución acuosa.", correct: true },
-                    { text: "Una sustancia que produce iones OH- en solución acuosa.", correct: false },
-                    { text: "Una sustancia que dona un par de electrones.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una base según Arrhenius?",
-                answers: [
-                    { text: "Una sustancia que produce iones OH- en solución acuosa.", correct: true },
-                    { text: "Una sustancia que produce iones H+ en solución acuosa.", correct: false },
-                    { text: "Una sustancia que acepta un par de electrones.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la electronegatividad?",
-                answers: [
-                    { text: "La capacidad de un átomo para atraer electrones hacia sí mismo en un enlace químico.", correct: true },
-                    { text: "La cantidad de energía necesaria para remover un electrón de un átomo.", correct: false },
-                    { text: "La cantidad de energía liberada cuando un átomo gana un electrón.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una reacción de oxidación?",
-                answers: [
-                    { text: "Un proceso en el que un átomo o ion pierde electrones.", correct: true },
-                    { text: "Un proceso en el que un átomo o ion gana electrones.", correct: false },
-                    { text: "Un proceso en el que un átomo o ion se disuelve en agua.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una reacción de reducción?",
-                answers: [
-                    { text: "Un proceso en el que un átomo o ion gana electrones.", correct: true },
-                    { text: "Un proceso en el que un átomo o ion pierde electrones.", correct: false },
-                    { text: "Un proceso en el que un átomo o ion se disuelve en agua.", correct: false }
-                ]
-            }
-        ];
+</div>
 
-        let attempt = 0;
-        const maxAttempts = 3;
+<div class="container" id="evaluation" style="display:none;">
+    <h1>Unidad 5: La Teoría Atómica</h1>
+    <div id="timer">Tiempo restante: 30:00</div>
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function loadQuiz() {
-            const quizContainer = document.getElementById('quiz');
-            quizContainer.innerHTML = '';
-            quizData.forEach((data, index) => {
-                const questionContainer = document.createElement('div');
-                questionContainer.className = 'question';
-
-                const questionTitle = document.createElement('h3');
-                questionTitle.innerText = `${index + 1}. ${data.question}`;
-                questionContainer.appendChild(questionTitle);
-
-                const optionsList = document.createElement('ul');
-                optionsList.className = 'options';
-
-                shuffle(data.answers).forEach(answer => {
-                    const option = document.createElement('li');
-                    const optionLabel = document.createElement('label');
-                    const optionInput = document.createElement('input');
-                    optionInput.type = 'radio';
-                    optionInput.name = `question${index}`;
-                    optionInput.value = answer.correct;
-                    optionLabel.appendChild(optionInput);
-                    optionLabel.appendChild(document.createTextNode(answer.text));
-                    option.appendChild(optionLabel);
-                    optionsList.appendChild(option);
-                });
-
-                questionContainer.appendChild(optionsList);
-                quizContainer.appendChild(questionContainer);
-            });
-        }
-
-        function submitQuiz() {
-            if (attempt >= maxAttempts) {
-                alert('Has alcanzado el número máximo de intentos.');
-                return;
-            }
-
-            const resultsContainer = document.getElementById('results');
-            const answers = document.querySelectorAll('input[type="radio"]:checked');
-            let score = 0;
-
-            quizData.forEach((data, index) => {
-                const selected = answers[index] ? answers[index].value === 'true' : null;
-                if (selected === true) {
-                    score += 0.4; // Each correct answer is worth 0.4 points
-                }
-            });
-
-            score = Math.round(score * 10) / 10; // Round to one decimal place
-            let feedback = quizData.map((data, index) => {
-                const selected = answers[index] ? answers[index].value === 'true' : null;
-                let result;
-                if (selected === null) {
-                    result = "No contestada";
-                } else if (selected === true) {
-                    result = "Correcta";
-                } else {
-                    result = "Incorrecta";
-                }
-                return `<p>${index + 1}. ${result}</p>`;
-            }).join("");
-
-            resultsContainer.innerHTML = `<h3>Resultados:</h3><p>Puntaje: ${score} / 10</p>${feedback}`;
-
-            attempt++;
-            if (attempt >= maxAttempts) {
-                alert('Has alcanzado el número máximo de intentos.');
-            }
-        }
-
-        document.getElementById('submit').addEventListener('click', submitQuiz);
-
-        loadQuiz();
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación: La Teoría Atómica (Química)</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            color: #333;
-        }
-        .quiz-container {
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px;
-        }
-        .question {
-            margin-bottom: 15px;
-        }
-        .options {
-            list-style-type: none;
-            padding: 0;
-        }
-        .options li {
-            margin-bottom: 10px;
-        }
-        button {
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        #results {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            width: 100%;
-            text-align: center;
-            position: fixed;
-            bottom: 0;
-        }
-    </style>
-</head>
-<body>
-    <h1>Evaluación: La Teoría Atómica (Química)</h1>
-    <div class="quiz-container">
-        <div id="quiz"></div>
-        <button id="submit">Enviar respuestas</button>
-        <div id="results"></div>
+    <!-- Indicador 5.1 -->
+    <h2>Indicador 5.1: Estructura interna de la materia</h2>
+    <div class="question">
+        <label>1. ¿Cuál es la carga eléctrica de un protón?</label>
+        <div class="options">
+            <label><input type="radio" name="q1" value="correcto" required> A. Positiva.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> B. Negativa.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> C. Neutra.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> D. No tiene carga.</label>
+        </div>
     </div>
-    <footer>
-        &copy; Derechos Reservados Prof. Alberto Sanchez
-    </footer>
-    <script>
-        const quizData = [
-            {
-                question: "¿Qué es un átomo?",
-                answers: [
-                    { text: "La unidad más pequeña de un elemento que conserva sus propiedades.", correct: true },
-                    { text: "Una molécula compuesta por varios elementos.", correct: false },
-                    { text: "Un ion cargado.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un electrón?",
-                answers: [
-                    { text: "Una partícula subatómica con carga negativa.", correct: true },
-                    { text: "Una partícula subatómica con carga positiva.", correct: false },
-                    { text: "Una partícula subatómica sin carga.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un protón?",
-                answers: [
-                    { text: "Una partícula subatómica con carga positiva.", correct: true },
-                    { text: "Una partícula subatómica con carga negativa.", correct: false },
-                    { text: "Una partícula subatómica sin carga.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un neutrón?",
-                answers: [
-                    { text: "Una partícula subatómica sin carga.", correct: true },
-                    { text: "Una partícula subatómica con carga positiva.", correct: false },
-                    { text: "Una partícula subatómica con carga negativa.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el número atómico?",
-                answers: [
-                    { text: "El número de protones en el núcleo de un átomo.", correct: true },
-                    { text: "El número de electrones en un átomo.", correct: false },
-                    { text: "El número de neutrones en un átomo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la masa atómica?",
-                answers: [
-                    { text: "La masa promedio de los átomos de un elemento, teniendo en cuenta los isótopos.", correct: true },
-                    { text: "La masa de un solo átomo de un elemento.", correct: false },
-                    { text: "La masa del núcleo de un átomo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un isótopo?",
-                answers: [
-                    { text: "Átomos del mismo elemento con diferente número de neutrones.", correct: true },
-                    { text: "Átomos de diferentes elementos con el mismo número de protones.", correct: false },
-                    { text: "Átomos del mismo elemento con diferente número de protones.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un ion?",
-                answers: [
-                    { text: "Un átomo o molécula con carga eléctrica debido a la pérdida o ganancia de electrones.", correct: true },
-                    { text: "Un átomo o molécula con carga eléctrica debido a la pérdida o ganancia de protones.", correct: false },
-                    { text: "Un átomo o molécula sin carga eléctrica.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el modelo de Bohr?",
-                answers: [
-                    { text: "Un modelo atómico que describe los electrones en órbitas circulares alrededor del núcleo.", correct: true },
-                    { text: "Un modelo atómico que describe los electrones en una nube alrededor del núcleo.", correct: false },
-                    { text: "Un modelo atómico que describe los protones en órbitas circulares alrededor del núcleo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el modelo de nube de electrones?",
-                answers: [
-                    { text: "Un modelo atómico que describe los electrones en una nube difusa alrededor del núcleo.", correct: true },
-                    { text: "Un modelo atómico que describe los electrones en órbitas circulares alrededor del núcleo.", correct: false },
-                    { text: "Un modelo atómico que describe los protones en una nube difusa alrededor del núcleo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el número de masa?",
-                answers: [
-                    { text: "La suma de protones y neutrones en el núcleo de un átomo.", correct: true },
-                    { text: "El número de protones en un átomo.", correct: false },
-                    { text: "El número de electrones en un átomo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la configuración electrónica?",
-                answers: [
-                    { text: "La distribución de electrones en los diferentes niveles de energía de un átomo.", correct: true },
-                    { text: "La distribución de protones en el núcleo de un átomo.", correct: false },
-                    { text: "La distribución de neutrones en el núcleo de un átomo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el principio de exclusión de Pauli?",
-                answers: [
-                    { text: "Dos electrones en un átomo no pueden tener los mismos cuatro números cuánticos.", correct: true },
-                    { text: "Dos electrones en un átomo deben tener los mismos cuatro números cuánticos.", correct: false },
-                    { text: "Dos protones en un átomo no pueden tener los mismos cuatro números cuánticos.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la regla del octeto?",
-                answers: [
-                    { text: "Los átomos tienden a ganar, perder o compartir electrones para tener ocho electrones en su capa de valencia.", correct: true },
-                    { text: "Los átomos siempre tienen ocho protones en su núcleo.", correct: false },
-                    { text: "Los átomos siempre tienen ocho electrones en su núcleo.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una molécula?",
-                answers: [
-                    { text: "Una combinación de dos o más átomos unidos por enlaces químicos.", correct: true },
-                    { text: "Un átomo individual.", correct: false },
-                    { text: "Un ion con carga positiva.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace covalente?",
-                answers: [
-                    { text: "Un enlace químico en el que los átomos comparten electrones.", correct: true },
-                    { text: "Un enlace químico en el que un átomo transfiere electrones a otro.", correct: false },
-                    { text: "Un enlace químico en el que los protones son compartidos.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un enlace iónico?",
-                answers: [
-                    { text: "Un enlace químico en el que un átomo transfiere electrones a otro.", correct: true },
-                    { text: "Un enlace químico en el que los átomos comparten electrones.", correct: false },
-                    { text: "Un enlace químico en el que los protones son transferidos.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una reacción química?",
-                answers: [
-                    { text: "Un proceso en el que las sustancias se transforman en nuevas sustancias con propiedades diferentes.", correct: true },
-                    { text: "Un proceso en el que una sustancia se disuelve en otra.", correct: false },
-                    { text: "Un proceso en el que las moléculas se mezclan sin reaccionar.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una ecuación química?",
-                answers: [
-                    { text: "Una representación simbólica de una reacción química.", correct: true },
-                    { text: "Una fórmula matemática para calcular la masa atómica.", correct: false },
-                    { text: "Un diagrama que muestra la estructura de una molécula.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un catalizador?",
-                answers: [
-                    { text: "Una sustancia que aumenta la velocidad de una reacción química sin consumirse en el proceso.", correct: true },
-                    { text: "Una sustancia que disminuye la velocidad de una reacción química.", correct: false },
-                    { text: "Una sustancia que se consume en una reacción química.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es un ácido según Arrhenius?",
-                answers: [
-                    { text: "Una sustancia que produce iones H+ en solución acuosa.", correct: true },
-                    { text: "Una sustancia que produce iones OH- en solución acuosa.", correct: false },
-                    { text: "Una sustancia que dona un par de electrones.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una base según Arrhenius?",
-                answers: [
-                    { text: "Una sustancia que produce iones OH- en solución acuosa.", correct: true },
-                    { text: "Una sustancia que produce iones H+ en solución acuosa.", correct: false },
-                    { text: "Una sustancia que acepta un par de electrones.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la electronegatividad?",
-                answers: [
-                    { text: "La capacidad de un átomo para atraer electrones hacia sí mismo en un enlace químico.", correct: true },
-                    { text: "La cantidad de energía necesaria para remover un electrón de un átomo.", correct: false },
-                    { text: "La cantidad de energía liberada cuando un átomo gana un electrón.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una reacción de oxidación?",
-                answers: [
-                    { text: "Un proceso en el que un átomo o ion pierde electrones.", correct: true },
-                    { text: "Un proceso en el que un átomo o ion gana electrones.", correct: false },
-                    { text: "Un proceso en el que un átomo o ion se disuelve en agua.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una reacción de reducción?",
-                answers: [
-                    { text: "Un proceso en el que un átomo o ion gana electrones.", correct: true },
-                    { text: "Un proceso en el que un átomo o ion pierde electrones.", correct: false },
-                    { text: "Un proceso en el que un átomo o ion se disuelve en agua.", correct: false }
-                ]
-            }
-        ];
 
-        let attempt = 0;
-        const maxAttempts = 3;
+    <div class="question">
+        <label>2. ¿Qué partícula subatómica tiene una masa aproximadamente igual a la de un protón?</label>
+        <div class="options">
+            <label><input type="radio" name="q2" value="correcto" required> A. Neutrón.</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> B. Electrón.</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> C. Fotón.</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> D. Quark.</label>
+        </div>
+    </div>
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
+    <div class="question">
+        <label>3. ¿Dónde se encuentran los electrones en un átomo?</label>
+        <div class="options">
+            <label><input type="radio" name="q3" value="correcto" required> A. En la corteza, orbitando alrededor del núcleo.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> B. En el núcleo, junto con los protones y neutrones.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> C. Distribuidos al azar en el espacio vacío.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> D. Fusionados con los neutrones.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.2 -->
+    <h2>Indicador 5.2: Modelo del átomo de Bohr y mecánico cuántico</h2>
+    <div class="question">
+        <label>4. ¿Qué describe el modelo atómico de Bohr?</label>
+        <div class="options">
+            <label><input type="radio" name="q4" value="correcto" required> A. Los electrones orbitan el núcleo en niveles de energía definidos.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> B. Los electrones están dispersos uniformemente en todo el átomo.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> C. Los electrones se mueven libremente sin niveles de energía.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> D. Los electrones no existen en el átomo.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>5. ¿Cómo se diferencia el modelo mecánico cuántico del modelo de Bohr?</label>
+        <div class="options">
+            <label><input type="radio" name="q5" value="correcto" required> A. Describe los electrones como ondas en lugar de partículas.</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> B. Establece que los electrones tienen trayectorias circulares exactas.</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> C. Propone que los electrones están en el núcleo.</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> D. Sugiere que los electrones no tienen energía.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>6. ¿Qué establece el modelo atómico mecánico cuántico sobre la ubicación de los electrones?</label>
+        <div class="options">
+            <label><input type="radio" name="q6" value="correcto" required> A. Los electrones están en orbitales, que son regiones probables de encontrar un electrón.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> B. Los electrones están en trayectorias circulares fijas.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> C. Los electrones están en órbitas elípticas alrededor del núcleo.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> D. Los electrones no tienen una ubicación definida.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.3 -->
+    <h2>Indicador 5.3: Cálculo de la cantidad de materia en uma y gramos</h2>
+    <div class="question">
+        <label>7. ¿Cuántas umas tiene un átomo de carbono-12?</label>
+        <div class="options">
+            <label><input type="radio" name="q7" value="correcto" required> A. 12 uma.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> B. 6 uma.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> C. 24 uma.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> D. 1 uma.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>8. Si un mol de agua tiene una masa de 18 gramos, ¿cuántas moléculas de agua hay en un mol?</label>
+        <div class="options">
+            <label><input type="radio" name="q8" value="correcto" required> A. 6.022 x 10^23 moléculas.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> B. 1 x 10^23 moléculas.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> C. 6.022 x 10^22 moléculas.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> D. 18 x 10^23 moléculas.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>9. ¿Cuántos gramos pesa un mol de carbono (C), si su masa atómica es de 12 uma?</label>
+        <div class="options">
+            <label><input type="radio" name="q9" value="correcto" required> A. 12 gramos.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> B. 6 gramos.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> C. 24 gramos.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> D. 1 gramo.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.4 -->
+    <h2>Indicador 5.4: Unidad de mol y número de átomos</h2>
+    <div class="question">
+        <label>10. ¿Qué es un mol en química?</label>
+        <div class="options">
+            <label><input type="radio" name="q10" value="correcto" required> A. Es la cantidad de sustancia que contiene tantas entidades elementales como átomos hay en 12 gramos de carbono-12.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> B. Es la masa atómica de un elemento en gramos.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> C. Es el volumen ocupado por 1 gramo de cualquier sustancia.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> D. Es el número de átomos en un litro de cualquier gas.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>11. ¿Cuántos átomos hay en 2 moles de oxígeno (O2)?</label>
+        <div class="options">
+            <label><input type="radio" name="q11" value="correcto" required> A. 1.2044 x 10^24 átomos.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> B. 6.022 x 10^23 átomos.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> C. 3.011 x 10^23 átomos.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> D. 2 x 10^24 átomos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>12. Si se tiene 1 mol de un compuesto, ¿qué se puede afirmar sobre el número de moléculas en él?</label>
+        <div class="options">
+            <label><input type="radio" name="q12" value="correcto" required> A. Contiene 6.022 x 10^23 moléculas.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> B. Contiene 1.2044 x 10^24 moléculas.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> C. Contiene 12 moléculas.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> D. Contiene 6 moléculas.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.5 -->
+    <h2>Indicador 5.5: Número de Avogadro</h2>
+    <div class="question">
+        <label>13. ¿Qué describe el número de Avogadro?</label>
+        <div class="options">
+            <label><input type="radio" name="q13" value="correcto" required> A. El número de partículas en un mol de sustancia.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> B. El número de átomos en un gramo de sustancia.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> C. El número de protones en un mol de sustancia.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> D. El número de moléculas en un litro de sustancia.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>14. ¿Cómo se usa el número de Avogadro para convertir gramos a moles?</label>
+        <div class="options">
+            <label><input type="radio" name="q14" value="correcto" required> A. Dividiendo la masa de la sustancia en gramos por la masa molar de la sustancia.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> B. Multiplicando la masa de la sustancia en gramos por la masa molar de la sustancia.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> C. Sumando la masa de la sustancia en gramos con la masa molar de la sustancia.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> D. Restando la masa de la sustancia en gramos de la masa molar de la sustancia.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>15. Si tienes 2 moles de un compuesto, ¿cuántas partículas (átomos, moléculas, iones) hay en él?</label>
+        <div class="options">
+            <label><input type="radio" name="q15" value="correcto" required> A. 1.2044 x 10^24 partículas.</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> B. 6.022 x 10^23 partículas.</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> C. 3.011 x 10^23 partículas.</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> D. 12.044 x 10^23 partículas.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.6 -->
+    <h2>Indicador 5.6: Estado de ionización y cargas eléctricas</h2>
+    <div class="question">
+        <label>16. ¿Qué es la ionización en un átomo?</label>
+        <div class="options">
+            <label><input type="radio" name="q16" value="correcto" required> A. Es el proceso por el cual un átomo gana o pierde electrones y adquiere una carga neta.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> B. Es el proceso por el cual un átomo gana o pierde protones.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> C. Es el proceso por el cual un átomo se divide en dos.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> D. Es el proceso por el cual un átomo gana o pierde neutrones.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>17. ¿Qué ocurre cuando un átomo pierde un electrón?</label>
+        <div class="options">
+            <label><input type="radio" name="q17" value="correcto" required> A. Se convierte en un ion positivo.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> B. Se convierte en un ion negativo.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> C. Se convierte en un neutrón.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> D. Se convierte en un átomo neutro.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>18. ¿Qué ocurre cuando un átomo gana un electrón?</label>
+        <div class="options">
+            <label><input type="radio" name="q18" value="correcto" required> A. Se convierte en un ion negativo.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> B. Se convierte en un ion positivo.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> C. Se convierte en un protón.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> D. Se convierte en un neutrón.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.7 -->
+    <h2>Indicador 5.7: Organización de los elementos en la tabla periódica</h2>
+    <div class="question">
+        <label>19. ¿Qué criterio se utiliza para organizar los elementos en la tabla periódica moderna?</label>
+        <div class="options">
+            <label><input type="radio" name="q19" value="correcto" required> A. El orden creciente de su número atómico.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> B. El orden alfabético de sus nombres.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> C. El orden decreciente de su número de neutrones.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> D. El orden creciente de su masa atómica.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>20. ¿Qué característica define a los elementos que pertenecen al mismo grupo en la tabla periódica?</label>
+        <div class="options">
+            <label><input type="radio" name="q20" value="correcto" required> A. Tienen la misma cantidad de electrones en su capa de valencia.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> B. Tienen el mismo número de protones.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> C. Tienen el mismo número de neutrones.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> D. Tienen la misma masa atómica.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>21. ¿Qué relación tienen los períodos en la tabla periódica con los niveles de energía de los elementos?</label>
+        <div class="options">
+            <label><input type="radio" name="q21" value="correcto" required> A. Cada período corresponde a un nivel de energía principal ocupado por electrones.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> B. Cada período corresponde a un número de protones.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> C. Cada período corresponde a la masa atómica promedio.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> D. Cada período corresponde al número total de electrones.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.8 -->
+    <h2>Indicador 5.8: Identificación de elementos en la tabla periódica</h2>
+    <div class="question">
+        <label>22. ¿Qué elemento se encuentra en el grupo 1, período 2 de la tabla periódica?</label>
+        <div class="options">
+            <label><input type="radio" name="q22" value="correcto" required> A. Litio (Li).</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> B. Sodio (Na).</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> C. Hidrógeno (H).</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> D. Potasio (K).</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>23. ¿Qué tipo de elementos se encuentran principalmente en el grupo 18 de la tabla periódica?</label>
+        <div class="options">
+            <label><input type="radio" name="q23" value="correcto" required> A. Gases nobles.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> B. Halógenos.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> C. Metales alcalinos.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> D. Metales de transición.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>24. ¿Qué elemento se encuentra en el grupo 17 y es conocido por ser altamente reactivo?</label>
+        <div class="options">
+            <label><input type="radio" name="q24" value="correcto" required> A. Cloro (Cl).</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> B. Neón (Ne).</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> C. Oxígeno (O).</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> D. Sodio (Na).</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.9 -->
+    <h2>Indicador 5.9: Propiedades de los elementos químicos</h2>
+    <div class="question">
+        <label>25. ¿Qué es el radio atómico?</label>
+        <div class="options">
+            <label><input type="radio" name="q25" value="correcto" required> A. Es la distancia media desde el núcleo hasta la capa de electrones más externa.</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> B. Es la distancia media entre dos núcleos de átomos adyacentes.</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> C. Es la distancia desde el núcleo hasta el centro del átomo.</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> D. Es la distancia entre dos átomos de diferentes elementos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>26. ¿Qué es la energía de ionización?</label>
+        <div class="options">
+            <label><input type="radio" name="q26" value="correcto" required> A. Es la energía necesaria para remover un electrón de un átomo en estado gaseoso.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> B. Es la energía liberada al agregar un electrón a un átomo en estado gaseoso.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> C. Es la energía necesaria para romper un enlace químico.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> D. Es la energía necesaria para fusionar dos átomos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>27. ¿Qué es la electronegatividad?</label>
+        <div class="options">
+            <label><input type="radio" name="q27" value="correcto" required> A. Es la tendencia de un átomo a atraer electrones en un enlace químico.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> B. Es la capacidad de un átomo para perder electrones.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> C. Es la capacidad de un átomo para compartir electrones.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> D. Es la tendencia de un átomo a repeler electrones.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.10 -->
+    <h2>Indicador 5.10: Niveles de energía y configuración electrónica</h2>
+    <div class="question">
+        <label>28. ¿Qué son los niveles de energía en un átomo?</label>
+        <div class="options">
+            <label><input type="radio" name="q28" value="correcto" required> A. Son las regiones alrededor del núcleo donde es probable encontrar electrones.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> B. Son las distancias entre el núcleo y el electrón más cercano.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> C. Son las regiones donde se encuentran los neutrones en el núcleo.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> D. Son las regiones donde se encuentran los protones en el núcleo.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>29. ¿Qué es un orbital atómico?</label>
+        <div class="options">
+            <label><input type="radio" name="q29" value="correcto" required> A. Es la región del espacio alrededor del núcleo donde es probable encontrar un electrón.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> B. Es la órbita circular que sigue un electrón.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> C. Es la trayectoria exacta de un electrón alrededor del núcleo.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> D. Es la región donde se encuentran los protones en el núcleo.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>30. ¿Qué describe la configuración electrónica de un átomo?</label>
+        <div class="options">
+            <label><input type="radio" name="q30" value="correcto" required> A. La distribución de los electrones en los diferentes niveles y subniveles de energía.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> B. La distribución de protones y neutrones en el núcleo.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> C. La distribución de protones en los niveles de energía.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> D. La distribución de neutrones en los subniveles de energía.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.11 -->
+    <h2>Indicador 5.11: Orbitales s, p, d, f</h2>
+    <div class="question">
+        <label>31. ¿Cuál es la forma del orbital s?</label>
+        <div class="options">
+            <label><input type="radio" name="q31" value="correcto" required> A. Es esférica.</label><br>
+            <label><input type="radio" name="q31" value="incorrecto" required> B. Es elíptica.</label><br>
+            <label><input type="radio" name="q31" value="incorrecto" required> C. Es circular.</label><br>
+            <label><input type="radio" name="q31" value="incorrecto" required> D. Es plana.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>32. ¿Cuántos orbitales p existen en un nivel de energía?</label>
+        <div class="options">
+            <label><input type="radio" name="q32" value="correcto" required> A. Tres orbitales p.</label><br>
+            <label><input type="radio" name="q32" value="incorrecto" required> B. Un orbital p.</label><br>
+            <label><input type="radio" name="q32" value="incorrecto" required> C. Dos orbitales p.</label><br>
+            <label><input type="radio" name="q32" value="incorrecto" required> D. Cuatro orbitales p.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>33. ¿Cuál es la forma del orbital d?</label>
+        <div class="options">
+            <label><input type="radio" name="q33" value="correcto" required> A. Tiene una forma compleja, generalmente descrita como en forma de trébol.</label><br>
+            <label><input type="radio" name="q33" value="incorrecto" required> B. Tiene forma esférica.</label><br>
+            <label><input type="radio" name="q33" value="incorrecto" required> C. Tiene forma de varilla.</label><br>
+            <label><input type="radio" name="q33" value="incorrecto" required> D. Tiene forma circular.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.12 -->
+    <h2>Indicador 5.12: Números cuánticos</h2>
+    <div class="question">
+        <label>34. ¿Qué describe el número cuántico principal (n)?</label>
+        <div class="options">
+            <label><input type="radio" name="q34" value="correcto" required> A. El nivel de energía en el que se encuentra un electrón.</label><br>
+            <label><input type="radio" name="q34" value="incorrecto" required> B. La orientación del orbital.</label><br>
+            <label><input type="radio" name="q34" value="incorrecto" required> C. La forma del orbital.</label><br>
+            <label><input type="radio" name="q34" value="incorrecto" required> D. El espín del electrón.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>35. ¿Qué describe el número cuántico azimutal (l)?</label>
+        <div class="options">
+            <label><input type="radio" name="q35" value="correcto" required> A. La forma del orbital.</label><br>
+            <label><input type="radio" name="q35" value="incorrecto" required> B. El nivel de energía en el que se encuentra un electrón.</label><br>
+            <label><input type="radio" name="q35" value="incorrecto" required> C. La orientación del orbital.</label><br>
+            <label><input type="radio" name="q35" value="incorrecto" required> D. El espín del electrón.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>36. ¿Qué describe el número cuántico magnético (m)?</label>
+        <div class="options">
+            <label><input type="radio" name="q36" value="correcto" required> A. La orientación del orbital en el espacio.</label><br>
+            <label><input type="radio" name="q36" value="incorrecto" required> B. El nivel de energía en el que se encuentra un electrón.</label><br>
+            <label><input type="radio" name="q36" value="incorrecto" required> C. La forma del orbital.</label><br>
+            <label><input type="radio" name="q36" value="incorrecto" required> D. El espín del electrón.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 5.13 -->
+    <h2>Indicador 5.13: Configuración electrónica</h2>
+    <div class="question">
+        <label>37. ¿Qué es la configuración electrónica abreviada?</label>
+        <div class="options">
+            <label><input type="radio" name="q37" value="correcto" required> A. Es una representación simplificada que usa la configuración del gas noble anterior más cercano.</label><br>
+            <label><input type="radio" name="q37" value="incorrecto" required> B. Es una forma completa de representar la configuración electrónica usando todos los niveles y subniveles.</label><br>
+            <label><input type="radio" name="q37" value="incorrecto" required> C. Es una representación que omite los subniveles de energía.</label><br>
+            <label><input type="radio" name="q37" value="incorrecto" required> D. Es una configuración que solo usa los niveles de energía más externos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>38. ¿Cómo se representa el llenado de espín en una configuración electrónica?</label>
+        <div class="options">
+            <label><input type="radio" name="q38" value="correcto" required> A. Usando flechas hacia arriba y hacia abajo para representar los espines opuestos de los electrones en un orbital.</label><br>
+            <label><input type="radio" name="q38" value="incorrecto" required> B. Usando números enteros para representar los niveles de energía.</label><br>
+            <label><input type="radio" name="q38" value="incorrecto" required> C. Usando letras para representar los subniveles de energía.</label><br>
+            <label><input type="radio" name="q38" value="incorrecto" required> D. Usando colores para diferenciar los niveles de energía.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>39. ¿Qué principio establece que no pueden existir dos electrones en un átomo con los mismos cuatro números cuánticos?</label>
+        <div class="options">
+            <label><input type="radio" name="q39" value="correcto" required> A. Principio de exclusión de Pauli.</label><br>
+            <label><input type="radio" name="q39" value="incorrecto" required> B. Principio de Aufbau.</label><br>
+            <label><input type="radio" name="q39" value="incorrecto" required> C. Principio de Hund.</label><br>
+            <label><input type="radio" name="q39" value="incorrecto" required> D. Ley de conservación del espín.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>40. ¿Qué describe la regla de Hund en relación a la configuración electrónica?</label>
+        <div class="options">
+            <label><input type="radio" name="q40" value="correcto" required> A. Los electrones llenan los orbitales de igual energía uno a la vez antes de emparejarse.</label><br>
+            <label><input type="radio" name="q40" value="incorrecto" required> B. Los electrones llenan primero los orbitales de menor energía.</label><br>
+            <label><input type="radio" name="q40" value="incorrecto" required> C. Los electrones siempre llenan primero los orbitales de mayor energía.</label><br>
+            <label><input type="radio" name="q40" value="incorrecto" required> D. Los electrones se emparejan inmediatamente en todos los orbitales disponibles.</label>
+        </div>
+    </div>
+
+    <button class="submit-btn" onclick="calculateGrade()">Obtener Calificación</button>
+</div>
+
+<div class="popup" id="finalPopup" style="display: none;">
+    <div class="popup-content">
+        <h2>Resultado de la Evaluación</h2>
+        <p id="nombreFinal"></p>
+        <p id="nieFinal"></p>
+        <p id="gradeFinal"></p>
+        <button onclick="closePopup()">Cerrar</button>
+    </div>
+</div>
+
+<script>
+    const authorizedNIEs = [
+        "4839280", "19711634", "4839293", "6297544", "19711644",
+        "3850927", "19711635", "4267835", "3293986", "19711278",
+        "19711637", "4267839", "19806177", "4839298", "4267832",
+        "4267843", "4839279", "4839301", "19964688"
+    ];
+
+    let timer;
+    let totalSeconds = 1800;
+
+    window.onload = function() {
+        document.getElementById('popup').style.display = 'flex';
+    };
+
+    function validatePopup() {
+        const nombre = document.getElementById('nombre').value;
+        const nie = document.getElementById('nie').value;
+
+        if (nombre === "" || nie === "") {
+            alert("Por favor, complete todos los campos.");
+        } else if (!authorizedNIEs.includes(nie)) {
+            alert("NIE no autorizado.");
+        } else {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('evaluation').style.display = 'block';
+            startTimer();
         }
+    }
 
-        function loadQuiz() {
-            const quizContainer = document.getElementById('quiz');
-            quizContainer.innerHTML = '';
-            quizData.forEach((data, index) => {
-                const questionContainer = document.createElement('div');
-                questionContainer.className = 'question';
+    function startTimer() {
+        timer = setInterval(function() {
+            totalSeconds--;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            document.getElementById('timer').textContent = `Tiempo restante: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-                const questionTitle = document.createElement('h3');
-                questionTitle.innerText = `${index + 1}. ${data.question}`;
-                questionContainer.appendChild(questionTitle);
-
-                const optionsList = document.createElement('ul');
-                optionsList.className = 'options';
-
-                shuffle(data.answers).forEach(answer => {
-                    const option = document.createElement('li');
-                    const optionLabel = document.createElement('label');
-                    const optionInput = document.createElement('input');
-                    optionInput.type = 'radio';
-                    optionInput.name = `question${index}`;
-                    optionInput.value = answer.correct;
-                    optionLabel.appendChild(optionInput);
-                    optionLabel.appendChild(document.createTextNode(answer.text));
-                    option.appendChild(optionLabel);
-                    optionsList.appendChild(option);
-                });
-
-                questionContainer.appendChild(optionsList);
-                quizContainer.appendChild(questionContainer);
-            });
-        }
-
-        function submitQuiz() {
-            if (attempt >= maxAttempts) {
-                alert('Has alcanzado el número máximo de intentos.');
-                return;
+            if (totalSeconds <= 0) {
+                clearInterval(timer);
+                calculateGrade();
             }
+        }, 1000);
+    }
 
-            const resultsContainer = document.getElementById('results');
-            const answers = document.querySelectorAll('input[type="radio"]:checked');
-            let score = 0;
+    function calculateGrade() {
+        const totalQuestions = document.querySelectorAll('.question').length;
+        const correctAnswers = document.querySelectorAll('input[type="radio"]:checked[value="correcto"]').length;
+        const maxPoints = 10;
+        const grade = (correctAnswers / totalQuestions) * maxPoints;
 
-            quizData.forEach((data, index) => {
-                const selected = answers[index] ? answers[index].value === 'true' : null;
-                if (selected === true) {
-                    score += 0.4; // Each correct answer is worth 0.4 points
-                }
-            });
+        document.getElementById('nombreFinal').textContent = "Nombre: " + document.getElementById('nombre').value;
+        document.getElementById('nieFinal').textContent = "NIE: " + document.getElementById('nie').value;
+        document.getElementById('gradeFinal').textContent = "Su calificación es: " + grade.toFixed(2) + " de " + maxPoints;
 
-            score = Math.round(score * 10) / 10; // Round to one decimal place
-            let feedback = quizData.map((data, index) => {
-                const selected = answers[index] ? answers[index].value === 'true' : null;
-                let result;
-                if (selected === null) {
-                    result = "No contestada";
-                } else if (selected === true) {
-                    result = "Correcta";
-                } else {
-                    result = "Incorrecta";
-                }
-                return `<p>${index + 1}. ${result}</p>`;
-            }).join("");
+        document.getElementById('finalPopup').style.display = 'flex';
+    }
 
-            resultsContainer.innerHTML = `<h3>Resultados:</h3><p>Puntaje: ${score} / 10</p>${feedback}`;
+    function closePopup() {
+        document.getElementById('finalPopup').style.display = 'none';
+    }
+</script>
 
-            attempt++;
-            if (attempt >= maxAttempts) {
-                alert('Has alcanzado el número máximo de intentos.');
-            }
-        }
-
-        document.getElementById('submit').addEventListener('click', submitQuiz);
-
-        loadQuiz();
-    </script>
 </body>
 </html>
